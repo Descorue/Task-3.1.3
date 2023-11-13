@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
@@ -13,9 +14,15 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserDao userDao;
+    private PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
+
+    }
+
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -31,8 +38,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addUser(User user) {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
         userDao.addUser(user);
-
     }
 
     @Override
@@ -44,6 +52,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUser(User user) {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
         userDao.updateUser(user);
 
     }
@@ -54,7 +64,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userDao.findUserByName(username);
+        User user = userDao.findUserByName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return new User(user.getUsername(), user.getPassword(), user.getAge(), user.getRoles());
     }
 }
