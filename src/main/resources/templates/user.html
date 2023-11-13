@@ -1,11 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Page</title>
+    <title>User</title>
 </head>
 <body>
-<h1>Welcome, <span th:text="${user.username}"></span>!</h1>
+<h1>Welcome to your site! </h1>
+<table th:border="1" th:cellpadding="5">
+    <tr>
+        <th>Name</th>
+        <th>Age</th>
+    </tr>
+    <tr th:each="user : ${user}">
+        <td th:utext="${user.username}">username</td>
+        <td th:utext="${user.age}">age</td>
+    </tr>
+</table>
+<br>
+<form th:action="@{/logout}" method="get">
+    <input type="submit" value="Logout"/>
+</form>
 </body>
 </html>

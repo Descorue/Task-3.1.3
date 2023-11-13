@@ -8,7 +8,37 @@
 <body>
 <h1>Welcome to the Admin Page!</h1>
 
-<ul>
+<div>
+    <form th:action="@{/create}">
+        <input type="submit" th:value="Create"/></form>
+
+    <table th:border="2" align="left" cellpadding="5">
+        <tr>
+            <th>Username</th>
+            <th>Age</th>
+            <th>actions</th>
+
+        </tr>
+        <tr th:each="user : ${usersList}">
+            <td th:text="${user.getUsername()}">...</td>
+            <td th:text="${user.getAge()}">...</td>
+            <td>
+
+                <a th:href="@{/edit(id=${user.getId()})}"><input type="submit" th:value="edit"/></a>
+                <br>
+                <br>
+                <form th:method="post" th:action="@{/admin(id=${user.id})}">
+                    <input type="submit" th:value="delete"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+<form th:action="@{/logout}" method="get">
+    <input type="submit" value="Logout"/>
+</form>
+
+<!--<ul>
     <li th:each="user : ${usersList}">
         <span th:text="${user.username}"></span>
         <a th:href="@{'/edit?id=' + ${user.id}}">Edit</a>
@@ -17,8 +47,6 @@
             <button type="submit">Delete</button>
         </form>
     </li>
-</ul>
-
-<a th:href="@{'/create'}">Create User</a>
+</ul>-->
 </body>
 </html>
